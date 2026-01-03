@@ -3,26 +3,27 @@ version: 2.1
 jobs:
   build_telegram:
     macos:
-      xcode: "15.4.0" # نسخة مستقرة لتيليجرام
-    resource_class: macos.m1.medium # معالج M1 السريع
-
+      xcode: "15.4.0"
+    resource_class: macos.m1.medium
     steps:
-      - checkout # تحميل الكود من حسابك
-
+      - checkout
       - run:
           name: 🛠 Setup Bazel
           command: |
             brew install bazelisk
             echo "6.4.0" > .bazelversion
-
       - run:
           name: 🚀 Build App
           command: |
-            # سنقوم بتشغيل البناء الأساسي للتأكد من أن السيرفر يعمل
-            # سيحتاج هذا لاحقاً لمتغيرات التوقيع، لكننا نبدأ بالخطوة الأولى
             python3 build-system/Make/Make.py \
               --overrideXcodeVersion \
               --overrideBazelVersion \
               build \
               --configuration release_arm64 \
               --xcodeManagedCodesigning
+
+workflows:
+  version: 2
+  main_workflow:
+    jobs:
+      - build_telegram # هذا السطر هو الذي كان ينقصنا لتفعيل العمل
